@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GroundStation.Network</title>
+    <style>
+        @font-face {
+            font-family: 'Monaspace Krypton';
+            src: url('https://monaspace.githubnext.com/fonts/MonaspaceKrypton-Regular.woff2') format('woff2');
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: #1a1a1a;
+        }
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.7; /* Makes the map less prominent */
+        }
+        #text {
+            font-family: 'Monaspace Krypton', monospace;
+            font-size: 48px;
+            color: #e0e0e0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <svg id="map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
+        <g transform="translate(0, 100)">
+            <!-- Lines between central servers -->
+            <line x1="200" y1="250" x2="500" y2="250" stroke="#444" stroke-width="2" />
+            <line x1="500" y1="250" x2="800" y2="250" stroke="#444" stroke-width="2" />
+            <!-- Lines from ground stations to central servers -->
+            <line x1="100" y1="100" x2="200" y2="250" stroke="#444" stroke-width="1" />
+            <line x1="150" y1="300" x2="200" y2="250" stroke="#444" stroke-width="1" />
+            <line x1="300" y1="150" x2="500" y2="250" stroke="#444" stroke-width="1" />
+            <line x1="400" y1="350" x2="500" y2="250" stroke="#444" stroke-width="1" />
+            <line x1="600" y1="100" x2="800" y2="250" stroke="#444" stroke-width="1" />
+            <line x1="700" y1="300" x2="800" y2="250" stroke="#444" stroke-width="1" />
+            <line x1="900" y1="200" x2="800" y2="250" stroke="#444" stroke-width="1" />
+            <!-- Central servers -->
+            <circle cx="200" cy="250" r="7" fill="#888" />
+            <circle cx="500" cy="250" r="7" fill="#888" />
+            <circle cx="800" cy="250" r="7" fill="#888" />
+            <!-- Ground stations -->
+            <circle cx="100" cy="100" r="5" fill="#666" />
+            <circle cx="150" cy="300" r="5" fill="#666" />
+            <circle cx="300" cy="150" r="5" fill="#666" />
+            <circle cx="400" cy="350" r="5" fill="#666" />
+            <circle cx="600" cy="100" r="5" fill="#666" />
+            <circle cx="700" cy="300" r="5" fill="#666" />
+            <circle cx="900" cy="200" r="5" fill="#666" />
+        </g>
+    </svg>
+    <div id="text">GroundStation.Network</div>
+</body>
+</html>
