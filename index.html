@@ -30,9 +30,17 @@
         }
         #text {
             font-family: 'Monaspace Krypton', monospace;
-            font-size: 48px;
+            font-size: 4vw; /* Adjust font size for responsiveness */
             color: #e0e0e0;
             text-align: center;
+        }
+        @media (max-width: 768px) {
+            #text {
+                font-size: 6vw; /* Larger font size for smaller screens */
+            }
+            #map {
+                opacity: 0.5; /* Less prominence on smaller screens */
+            }
         }
     </style>
 </head>
@@ -61,7 +69,7 @@
             <circle cx="400" cy="350" r="5" fill="#666" />
             <circle cx="600" cy="100" r="5" fill="#666" />
             <circle cx="700" cy="300" r="5" fill="#666" />
-            <circle cx="900" cy="200" r="5" fill="#666" />
+            <circle cx="900" y="200" r="5" fill="#666" />
         </g>
     </svg>
     <div id="text">GroundStation.Network</div>
