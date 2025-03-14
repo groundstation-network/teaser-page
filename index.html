@@ -2,22 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
     <title>GroundStation.Network</title>
     <style>
         @font-face {
             font-family: 'Monaspace Krypton';
-            src: url('/assets/MonaspaceKryptonVarVF.woff2') format('woff2');
+            src: url('assets/MonaspaceKryptonVarVF.woff2') format('woff2');
         }
         body {
             margin: 0;
             padding: 0;
+            width: 100vw;
             height: 100vh;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            background: #1a1a1a;
+            background: #111;
+        }
+        #map-wrapper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #map {
             position: absolute;
@@ -25,7 +35,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            z-index: 2;
             opacity: 0.7; /* Makes the map less prominent */
         }
         #text {
@@ -33,45 +43,284 @@
             font-size: 4vw; /* Adjust font size for responsiveness */
             color: #e0e0e0;
             text-align: center;
+            animation: textGlow 3s ease-in-out infinite;
+            opacity: 0;
+            position: relative;
+            z-index: 3;
+        }
+        .typing {
+            opacity: 1 !important;
+            animation: typing 2s steps(20) 1, textGlow 3s ease-in-out infinite !important;
+        }
+        @keyframes textGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            }
+        }
+        @keyframes typing {
+            from { 
+                clip-path: inset(0 100% 0 0);
+            }
+            to { 
+                clip-path: inset(0 0 0 0);
+            }
         }
         @media (max-width: 768px) {
             #text {
                 font-size: 6vw; /* Larger font size for smaller screens */
             }
-            #map {
-                opacity: 0.5; /* Less prominence on smaller screens */
+            #map-wrapper {
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
             }
+            #map {
+                transform: scale(1.2); /* Scale up the map */
+                translate: 0 5px; /* Center the map */
+                /* rotate: 90deg; Rotate the map */
+                transform-origin: center;
+            }
+        }
+        .pulse-dot {
+            fill: #4CAF50;
+            r: 3;
+        }
+        
+        @keyframes moveAndFade {
+            0% {
+                opacity: 0.8;
+                offset-distance: 0%;
+            }
+            50% {
+                opacity: 0.1;
+                offset-distance: 100%;
+            }
+            51% {
+                opacity: 0.8;
+                offset-distance: 100%;
+            }
+            100% {
+                opacity: 0.1;
+                offset-distance: 0%;
+            }
+        }
+
+        .animated-dot {
+            offset-rotate: 0deg;
+            animation: moveAndFade 5s infinite;
+        }
+
+        /* Different delays for each dot to create a natural flow */
+        .dot-delay-1 { animation-delay: 0s; }
+        .dot-delay-2 { animation-delay: 1s; }
+        .dot-delay-3 { animation-delay: 2s; }
+
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .tooltip {
+            opacity: 0;
+            fill: #fff;
+            font-size: 12px;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .station:hover + .tooltip {
+            opacity: 1;
+        }
+
+        .animated-dots-layer {
+            pointer-events: none;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                r: 7;
+                opacity: 0.5;
+            }
+            50% {
+                r: 12;
+                opacity: 0;
+            }
+            100% {
+                r: 7;
+                opacity: 0.5;
+            }
+        }
+
+        .server-ring {
+            fill: none;
+            stroke: #4CAF50;
+            stroke-width: 1;
+            opacity: 0.5;
+            animation: pulse-ring 2s ease-out infinite;
         }
     </style>
 </head>
 <body>
-    <svg id="map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
-        <g transform="translate(0, 40)">
-            <!-- Lines between central servers -->
-            <line x1="200" y1="250" x2="500" y2="250" stroke="#444" stroke-width="2" />
-            <line x1="500" y1="250" x2="800" y2="250" stroke="#444" stroke-width="2" />
-            <!-- Lines from ground stations to central servers -->
-            <line x1="100" y1="100" x2="200" y2="250" stroke="#444" stroke-width="1" />
-            <line x1="150" y1="300" x2="200" y2="250" stroke="#444" stroke-width="1" />
-            <line x1="300" y1="150" x2="500" y2="250" stroke="#444" stroke-width="1" />
-            <line x1="400" y1="350" x2="500" y2="250" stroke="#444" stroke-width="1" />
-            <line x1="600" y1="100" x2="800" y2="250" stroke="#444" stroke-width="1" />
-            <line x1="700" y1="300" x2="800" y2="250" stroke="#444" stroke-width="1" />
-            <line x1="900" y1="200" x2="800" y2="250" stroke="#444" stroke-width="1" />
-            <!-- Central servers -->
-            <circle cx="200" cy="250" r="7" fill="#888" />
-            <circle cx="500" cy="250" r="7" fill="#888" />
-            <circle cx="800" cy="250" r="7" fill="#888" />
-            <!-- Ground stations -->
-            <circle cx="100" cy="100" r="5" fill="#666" />
-            <circle cx="150" cy="300" r="5" fill="#666" />
-            <circle cx="300" cy="150" r="5" fill="#666" />
-            <circle cx="400" cy="350" r="5" fill="#666" />
-            <circle cx="600" cy="100" r="5" fill="#666" />
-            <circle cx="700" cy="300" r="5" fill="#666" />
-            <circle cx="900" cy="200" r="5" fill="#666" />
-        </g>
-    </svg>
+    <canvas id="particles"></canvas>
+    <div id="map-wrapper">
+        <svg id="map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
+            <defs>
+                <!-- Define paths for the dots to follow -->
+                <path id="path1" d="M200,250 L100,100" />
+                <path id="path2" d="M200,250 L150,300" />
+                <path id="path3" d="M500,250 L300,150" />
+                <path id="path4" d="M500,250 L400,350" />
+                <path id="path5" d="M800,250 L600,100" />
+                <path id="path6" d="M800,250 L700,300" />
+                <path id="path7" d="M800,250 L900,200" />
+            </defs>
+            <g transform="translate(0, 40)">
+                <!-- Lines between central servers -->
+                <line x1="200" y1="250" x2="500" y2="250" stroke="#444" stroke-width="2" />
+                <line x1="500" y1="250" x2="800" y2="250" stroke="#444" stroke-width="2" />
+                <!-- Lines from ground stations to central servers -->
+                <line x1="100" y1="100" x2="200" y2="250" stroke="#444" stroke-width="1" />
+                <line x1="150" y1="300" x2="200" y2="250" stroke="#444" stroke-width="1" />
+                <line x1="300" y1="150" x2="500" y2="250" stroke="#444" stroke-width="1" />
+                <line x1="400" y1="350" x2="500" y2="250" stroke="#444" stroke-width="1" />
+                <line x1="600" y1="100" x2="800" y2="250" stroke="#444" stroke-width="1" />
+                <line x1="700" y1="300" x2="800" y2="250" stroke="#444" stroke-width="1" />
+                <line x1="900" y1="200" x2="800" y2="250" stroke="#444" stroke-width="1" />
+                <!-- Central servers -->
+                <circle cx="200" cy="250" r="7" fill="#888" />
+                <circle cx="500" cy="250" r="7" fill="#888" />
+                <circle cx="800" cy="250" r="7" fill="#888" />
+                <!-- Ground stations with tooltips -->
+                <g class="stations-layer">
+                    <g class="station">
+                        <circle cx="100" cy="100" r="5" fill="#666" />
+                    </g>
+                    <text class="tooltip" x="110" y="90">Churchill, Canada</text>
+
+                    <g class="station">
+                        <circle cx="150" cy="300" r="5" fill="#666" />
+                    </g>
+                    <text class="tooltip" x="160" y="290">Awarua, New Zealand</text>
+
+                    <g class="station">
+                        <circle cx="300" cy="150" r="5" fill="#666" />
+                    </g>
+                    <text class="tooltip" x="310" y="140">Dongara, Australia</text>
+
+                    <g class="station">
+                        <circle cx="400" cy="350" r="5" fill="#666" />
+                    </g>
+                    <text class="tooltip" x="410" y="340">Punta Arenas, Chile</text>
+
+                    <g class="station">
+                        <circle cx="600" cy="100" r="5" fill="#666" />
+                    </g>
+                    <text class="tooltip" x="610" y="90">Fairbanks, Alaska</text>
+
+                    <g class="station">
+                        <circle cx="700" cy="300" r="5" fill="#666" />
+                    </g>
+                    <text class="tooltip" x="710" y="290">Key West, Florida</text>
+
+                    <g class="station">
+                        <circle cx="900" cy="200" r="5" fill="#666" />
+                    </g>
+                    <text class="tooltip" x="910" y="190">Trollsat, Antarctica</text>
+                </g>
+                <!-- Server rings -->
+                <circle class="server-ring" cx="200" cy="250" />
+                <circle class="server-ring" cx="500" cy="250" />
+                <circle class="server-ring" cx="800" cy="250" />
+                <!-- Animated dots - moved to separate layer -->
+                <g class="animated-dots-layer">
+                    <circle class="pulse-dot animated-dot dot-delay-1" style="offset-path: path('M200,250 L100,100')" />
+                    <circle class="pulse-dot animated-dot dot-delay-2" style="offset-path: path('M200,250 L150,300')" />
+                    <circle class="pulse-dot animated-dot dot-delay-3" style="offset-path: path('M500,250 L300,150')" />
+                    <circle class="pulse-dot animated-dot dot-delay-1" style="offset-path: path('M500,250 L400,350')" />
+                    <circle class="pulse-dot animated-dot dot-delay-2" style="offset-path: path('M800,250 L600,100')" />
+                    <circle class="pulse-dot animated-dot dot-delay-3" style="offset-path: path('M800,250 L700,300')" />
+                    <circle class="pulse-dot animated-dot dot-delay-1" style="offset-path: path('M800,250 L900,200')" />
+                </g>
+            </g>
+        </svg>
+    </div>
     <div id="text">GroundStation.Network</div>
+    <script>
+        // Particle background
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+
+        console.log(window.innerWidth, window.innerHeight);
+        
+        // let width = canvas.width = window.innerWidth;
+        // let height = canvas.height = window.innerHeight;
+        //; Use body width and height to avoid scrollbars
+        let width = canvas.width = document.body.clientWidth;
+        let height = canvas.height = document.body.clientHeight;
+        
+        const particles = [];
+        const particleCount = 50;
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+            
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Initialize particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+        
+        animate();
+
+        // Typing animation
+        window.addEventListener('load', () => {
+            const text = document.getElementById('text');
+            text.classList.add('typing');
+        });
+    </script>
 </body>
 </html>
